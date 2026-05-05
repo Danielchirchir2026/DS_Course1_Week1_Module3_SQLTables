@@ -5,7 +5,7 @@ import pandas as pd
 conn = sqlite3.connect("data.sqlite")
 
 
-# STEP 1
+# STEP 1 
 
 df_boston = pd.read_sql("""
 SELECT e.firstName,
@@ -17,8 +17,8 @@ WHERE o.city = 'Boston'
 """, conn)
 
 
+# STEP 2 
 
-# STEP 2
 df_zero_emp = pd.read_sql("""
 SELECT o.officeCode,
        o.city,
@@ -32,7 +32,8 @@ HAVING COUNT(e.employeeNumber) = 0
 """, conn)
 
 
-# STEP 3
+# STEP 3 
+
 df_employee = pd.read_sql("""
 SELECT e.firstName,
        e.lastName,
@@ -45,7 +46,8 @@ ORDER BY e.firstName ASC, e.lastName ASC
 """, conn)
 
 
-# STEP 4
+# STEP 4 
+
 df_contacts = pd.read_sql("""
 SELECT c.contactFirstName,
        c.contactLastName,
@@ -59,7 +61,8 @@ ORDER BY c.contactLastName ASC
 """, conn)
 
 
-# STEP 5
+# STEP 5 
+
 df_payment = pd.read_sql("""
 SELECT c.contactFirstName,
        c.contactLastName,
@@ -72,7 +75,7 @@ ORDER BY CAST(p.amount AS REAL) DESC
 """, conn)
 
 
-# STEP 6
+# STEP 6 
 df_credit = pd.read_sql("""
 SELECT e.employeeNumber,
        e.firstName,
@@ -88,7 +91,8 @@ LIMIT 4
 """, conn)
 
 
-# STEP 7
+# STEP 7 
+
 df_product_sold = pd.read_sql("""
 SELECT p.productName,
        COUNT(DISTINCT od.orderNumber) AS numorders,
@@ -101,27 +105,24 @@ ORDER BY totalunits DESC
 """, conn)
 
 
-# STEP 8
+# STEP 8 
 
 df_total_customers = pd.read_sql("""
 SELECT p.productName,
        p.productCode,
-       COUNT(DISTINCT c.customerNumber) AS numpurchasers
-FROM customers c
-JOIN orders o
-  ON c.customerNumber = o.customerNumber
+       COUNT(DISTINCT o.customerNumber) AS numpurchasers
+FROM products p
 JOIN orderdetails od
-  ON o.orderNumber = od.orderNumber
-JOIN products p
-  ON od.productCode = p.productCode
+  ON p.productCode = od.productCode
+JOIN orders o
+  ON od.orderNumber = o.orderNumber
 GROUP BY p.productName, p.productCode
 ORDER BY numpurchasers DESC
+LIMIT 12
 """, conn)
 
 
-
-# STEP 9
-
+# STEP 9 
 
 df_customers = pd.read_sql("""
 SELECT o.officeCode,
@@ -133,13 +134,12 @@ JOIN employees e
 JOIN customers c
   ON e.employeeNumber = c.salesRepEmployeeNumber
 GROUP BY o.officeCode, o.city
-ORDER BY n_customers DESC
+ORDER BY o.officeCode ASC
 """, conn)
 
 
+# STEP 10 
 
-
-# STEP 10
 df_under_20 = pd.read_sql("""
 SELECT DISTINCT e.employeeNumber,
        e.firstName,
