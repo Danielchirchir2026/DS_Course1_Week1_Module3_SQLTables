@@ -6,15 +6,16 @@ conn = sqlite3.connect("data.sqlite")
 
 
 # STEP 1
+
 df_boston = pd.read_sql("""
 SELECT e.firstName,
-       e.lastName,
-       e.jobTitle
+       e.lastName
 FROM employees e
 JOIN offices o
   ON e.officeCode = o.officeCode
 WHERE o.city = 'Boston'
 """, conn)
+
 
 
 # STEP 2
@@ -116,18 +117,22 @@ ORDER BY numpurchasers DESC
 
 
 # STEP 9
+
 df_customers = pd.read_sql("""
 SELECT o.officeCode,
        o.city,
-       COUNT(DISTINCT c.customerNumber) AS n_customers
+       COUNT(DISTINCT ord.customerNumber) AS n_customers
 FROM offices o
-LEFT JOIN employees e
+JOIN employees e
   ON o.officeCode = e.officeCode
-LEFT JOIN customers c
+JOIN customers c
   ON e.employeeNumber = c.salesRepEmployeeNumber
+JOIN orders ord
+  ON c.customerNumber = ord.customerNumber
 GROUP BY o.officeCode, o.city
 ORDER BY n_customers DESC
 """, conn)
+
 
 
 # STEP 10
