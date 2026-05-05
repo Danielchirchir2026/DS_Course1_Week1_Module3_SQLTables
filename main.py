@@ -118,20 +118,20 @@ ORDER BY numpurchasers DESC
 
 # STEP 9
 
+
 df_customers = pd.read_sql("""
 SELECT o.officeCode,
        o.city,
-       COUNT(DISTINCT ord.customerNumber) AS n_customers
+       COUNT(DISTINCT c.customerNumber) AS n_customers
 FROM offices o
 JOIN employees e
   ON o.officeCode = e.officeCode
 JOIN customers c
   ON e.employeeNumber = c.salesRepEmployeeNumber
-JOIN orders ord
-  ON c.customerNumber = ord.customerNumber
 GROUP BY o.officeCode, o.city
 ORDER BY n_customers DESC
 """, conn)
+
 
 
 
